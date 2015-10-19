@@ -40,20 +40,22 @@ Just copy the script into your python markdown extension directory, eg.
 ## License
 furigana_markdown is licensed under the MIT license.
 """
-
-import markdown
-from markdown.inlinepatterns import Pattern
-from markdown.util import etree
+from . import Extension
+from ..inlinepatterns import Pattern
+from ..util import etree
 
 RUBY1_RE = r'(\[)(.)\]\(\-(.+?)\)'
 RUBY2_RE = r'()([\u4e00-\u9faf])（([\u3040-\u3096]+?)）'
+RUBY3_RE = r'()([\u4e00-\u9faf])\(([\u3040-\u3096]+?)\)'
 
-class FuriganaExtension(markdown.Extension):
+class FuriganaExtension(Extension):
     def extendMarkdown(self, md, md_globals):
         ruby1 = RubyPattern(RUBY1_RE)
         md.inlinePatterns.add('ruby1', ruby1, '<link')
         ruby2 = RubyPattern(RUBY2_RE)
         md.inlinePatterns.add('ruby2', ruby2, '<link')
+        ruby3 = RubyPattern(RUBY3_RE)
+        md.inlinePatterns.add('ruby3', ruby3, '<link')
 
 class RubyPattern(Pattern):
     def handleMatch(self, m):
@@ -68,5 +70,5 @@ class RubyPattern(Pattern):
         el4.text = ')'
         return el
 
-def makeExtension(configs=None):
-    return FuriganaExtension(configs=configs)
+def makeExtension(*args, **kwargs):
+    return FuriganaExtension(*args, **kwargs)
